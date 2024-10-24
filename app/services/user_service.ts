@@ -19,7 +19,7 @@ export default class UserService {
     return users
   }
 
-  async getUserById(id: number, populate: Populate = '*') {
+  async getById(id: number, populate: Populate = '*') {
     const query = User.query()
     buildQuery(query, populate, [
       {
@@ -31,7 +31,7 @@ export default class UserService {
     return await query.first()
   }
 
-  async edit({
+  async editById({
     id,
     ...fields
   }: Partial<EditUserPayload> & {

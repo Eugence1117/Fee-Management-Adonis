@@ -1,14 +1,10 @@
 import { Exception } from '@adonisjs/core/exceptions'
-import { OPERATION_NOT_SUPPORT, ROW_NOT_FOUND } from '../constants/errors.js'
-
-type Response = {
-  status: number
-  message?: string
-}
+import { OPERATION_NOT_SUPPORT, ROW_NOT_FOUND, VALIDATION_FAILED } from '../constants/errors.js'
 
 export class ErrorHandler {
   private _statusCode: number | undefined
   private _message: string | undefined = undefined
+  private _meta: Record<string, any> | undefined = undefined
 
   constructor(error: Error | Exception | any) {
     if (error instanceof Exception) {
@@ -26,8 +22,17 @@ export class ErrorHandler {
       case OPERATION_NOT_SUPPORT:
         this._statusCode = 400
         break
+      case VALIDATION_FAILED:
+        this._statusCode = 400
+        this._message = 'Invalid payload'
+        this._meta = {
+          errors: (error as any)?.messages || [],
+        }
+        break
       default:
         this._statusCode = 500
+        this._message = error.message
+        break
     }
   }
 
@@ -36,14 +41,16 @@ export class ErrorHandler {
     switch (error.code) {
       case ROW_NOT_FOUND:
         this._statusCode = 404
+        this._message = 'Target resource not found.'
         break
       default:
         this._statusCode = 500
+        this._message = error.message
+        break
     }
   }
 
-  toResponse(): Response {
-    console.error(this)
+  toResponseBody() {
     if (!this._statusCode) {
       return {
         status: 500,
@@ -53,6 +60,7 @@ export class ErrorHandler {
     return {
       status: this._statusCode,
       message: this._message,
+      meta: this._meta,
     }
   }
 }

@@ -1,5 +1,5 @@
-import { BaseModel, column } from '@adonisjs/lucid/orm'
-import { type HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import { type BelongsTo, type HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import User from './user.js'
 
@@ -12,7 +12,10 @@ export default class Fee extends BaseModel {
   declare amount: number
 
   @column()
-  declare user: HasOne<typeof User>
+  declare userId: number
+
+  @belongsTo(() => User)
+  declare user: BelongsTo<typeof User>
 
   @column()
   declare status: 'PAID' | 'UNPAID' | 'CANCELLED'
@@ -25,4 +28,7 @@ export default class Fee extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @column.dateTime()
+  declare deletedAt: DateTime | null
 }

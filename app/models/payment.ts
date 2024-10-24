@@ -14,7 +14,9 @@ export default class Payment extends BaseModel {
   declare status: 'COMPLETED' | 'IN_PROGRESS' | 'CANCELLED'
 
   @column()
-  @hasOne(() => Fee)
+  @hasOne(() => Fee, {
+    foreignKey: 'user_id',
+  })
   declare fee: HasOne<typeof Fee>
 
   @column.dateTime({ autoCreate: true })
@@ -22,4 +24,7 @@ export default class Payment extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @column.dateTime()
+  declare deletedAt: DateTime | null
 }
