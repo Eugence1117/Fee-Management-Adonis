@@ -7,7 +7,7 @@ export type CreateFeePayload = {
 }
 
 export type EditFeePayload = { id: Fee['id'] } & Partial<{
-  status: 'PAID' | 'UNPAID' | 'CANCELLED'
+  status: Fee['status']
   amount: number
   userId: User['id']
 }>

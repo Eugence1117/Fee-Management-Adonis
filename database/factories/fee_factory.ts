@@ -1,4 +1,4 @@
-import Fee from '#models/fee'
+import Fee, { FeeStatus } from '#models/fee'
 import factory from '@adonisjs/lucid/factories'
 import { UserFactory } from './user_factory.js'
 
@@ -11,9 +11,9 @@ export const FeeFactory = factory
       }),
     }
   })
-  .state('paid', (fee) => (fee.status = 'PAID'))
-  .state('cancelled', (fee) => (fee.status = 'CANCELLED'))
-  .state('unpaid', (fee) => (fee.status = 'UNPAID'))
+  .state('paid', (fee) => (fee.status = FeeStatus.Paid))
+  .state('cancelled', (fee) => (fee.status = FeeStatus.Cancelled))
+  .state('unpaid', (fee) => (fee.status = FeeStatus.Unpaid))
   .relation('user', () => UserFactory.apply('student'))
   .relation('createdBy', () => UserFactory.apply('staff'))
   .build()

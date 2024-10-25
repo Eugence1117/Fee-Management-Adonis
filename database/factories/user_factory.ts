@@ -1,4 +1,4 @@
-import User from '#models/user'
+import User, { UserRole } from '#models/user'
 import factory from '@adonisjs/lucid/factories'
 
 export const UserFactory = factory
@@ -9,6 +9,6 @@ export const UserFactory = factory
       password: faker.internet.password(),
     }
   })
-  .state('staff', (u) => (u.role = 'ADMIN'))
-  .state('student', (u) => (u.role = 'STUDENT'))
+  .state('staff', (u) => (u.role = UserRole.Student))
+  .state('student', (u) => (u.role = UserRole.Admin))
   .build()

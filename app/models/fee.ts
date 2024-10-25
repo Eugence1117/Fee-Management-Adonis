@@ -1,8 +1,14 @@
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
-import { type BelongsTo, type HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { type BelongsTo, type HasMany, type HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
+import Payment from './payment.js'
 import User from './user.js'
 
+export enum FeeStatus {
+  Paid = 'PAID',
+  Unpaid = 'UNPAID',
+  Cancelled = 'CANCELLED',
+}
 export default class Fee extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -14,11 +20,17 @@ export default class Fee extends BaseModel {
   @column()
   declare userId: number
 
+  @column()
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
   @column()
-  declare status: 'PAID' | 'UNPAID' | 'CANCELLED'
+  @hasMany(() => Payment)
+  declare payments: HasMany<typeof Payment>
+
+  @column()
+  declare status: FeeStatus
+
   // Meta
   @column()
   declare createdBy: HasOne<typeof User>

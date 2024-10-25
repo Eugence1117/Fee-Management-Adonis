@@ -1,4 +1,4 @@
-import User from '#models/user'
+import User, { UserRole } from '#models/user'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
 export default class extends BaseSeeder {
@@ -8,13 +8,13 @@ export default class extends BaseSeeder {
         email: 'eugencelim@gmail.com',
         password: 'eugence',
         fullName: 'Eugence',
-        role: 'ADMIN',
+        role: UserRole.Admin,
       },
       {
         email: 'student@gmail.com',
         password: 'student',
         fullName: 'Student A',
-        role: 'STUDENT',
+        role: UserRole.Student,
       },
     ])
     // Write your database queries inside the run method

@@ -8,9 +8,12 @@
 */
 
 import router from '@adonisjs/core/services/router'
+import { middleware } from './kernel.js'
 
-const UsersController = () => import('#controllers/users_controller')
-const FeesController = () => import('#controllers/fees_controller')
+const AuthController = () => import('#controllers/auth_controller')
+const StudentsController = () => import('#controllers/student_controller')
+const FeesController = () => import('#controllers/fee_controller')
+const PaymentsController = () => import('#controllers/payment_controller')
 
 router.get('/', async () => {
   return {
@@ -18,17 +21,24 @@ router.get('/', async () => {
   }
 })
 
-// User routes
-router.get('/users', [UsersController, 'list'])
-router.get('/users/:id', [UsersController, 'get'])
-router.patch('/users/:id', [UsersController, 'edit'])
+// Auth
+router.post('/login', [AuthController, 'login'])
+
+// Student routes
+router.get('/students', [StudentsController, 'list']).use([middleware.auth()])
+router.get('/students/:id', [StudentsController, 'get']).use([middleware.auth()])
+router.patch('/students/:id', [StudentsController, 'edit']).use([middleware.auth()])
 
 // Fee routes
-router.get('/fees', [FeesController, 'list'])
-router.get('/fees/:id', [FeesController, 'get'])
-router.post('/fees', [FeesController, 'create'])
-router.patch('/fees/:id', [FeesController, 'edit'])
-router.delete('/fees/:id', [FeesController, 'delete'])
+router.get('/fees', [FeesController, 'list']).use([middleware.auth()])
+router.get('/fees/:id', [FeesController, 'get']).use([middleware.auth()])
+router.post('/fees', [FeesController, 'create']).use([middleware.auth()])
+router.patch('/fees/:id', [FeesController, 'edit']).use([middleware.auth()])
+router.delete('/fees/:id', [FeesController, 'delete']).use([middleware.auth()])
 
-// Third party
-// router.post("/webhooks",[])
+// Payment routes
+router.get('/payments', [PaymentsController, 'list']).use([middleware.auth()])
+router.get('/payments/:id', [PaymentsController, 'get']).use([middleware.auth()])
+router.post('/payments', [PaymentsController, 'create']).use([middleware.auth()])
+router.patch('/payments/:id', [PaymentsController, 'edit']).use([middleware.auth()])
+router.delete('/payments/:id', [PaymentsController, 'delete']).use([middleware.auth()])

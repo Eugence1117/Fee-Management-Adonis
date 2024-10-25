@@ -3,6 +3,12 @@ import { type HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Fee from './fee.js'
 
+export enum PaymentStatus {
+  Pending = 'PENDING',
+  Completed = 'COMPLETED',
+  InProgress = 'IN_PROGRESS',
+  Cancelled = 'CANCELLED',
+}
 export default class Payment extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -11,12 +17,13 @@ export default class Payment extends BaseModel {
   declare amount: number
 
   @column()
-  declare status: 'COMPLETED' | 'IN_PROGRESS' | 'CANCELLED'
+  declare status: PaymentStatus
 
   @column()
-  @hasOne(() => Fee, {
-    foreignKey: 'user_id',
-  })
+  declare feeId: number
+
+  @column()
+  @hasOne(() => Fee)
   declare fee: HasOne<typeof Fee>
 
   @column.dateTime({ autoCreate: true })

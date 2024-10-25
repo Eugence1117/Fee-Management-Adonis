@@ -1,44 +1,41 @@
 import { Exception } from '@adonisjs/core/exceptions'
-import { OPERATION_NOT_SUPPORT, ROW_NOT_FOUND, VALIDATION_FAILED } from '../constants/errors.js'
+import {
+  FORBIDDEN,
+  INVALID_CREDENTIAL,
+  OPERATION_NOT_SUPPORT,
+  ROW_NOT_FOUND,
+  VALIDATION_FAILED,
+} from '../constants/errors.js'
 
+// https://docs.adonisjs.com/guides/references/exceptions#exceptions-reference
 export class ErrorHandler {
   private _statusCode: number | undefined
   private _message: string | undefined = undefined
   private _meta: Record<string, any> | undefined = undefined
 
   constructor(error: Error | Exception | any) {
-    if (error instanceof Exception) {
-      this._handleException(error)
-    } else if (error instanceof Error) {
-      this._handleError(error)
-    } else {
-      this._statusCode = 400
-      throw new Error('Not Implemented')
-    }
-  }
-
-  private _handleError(error: Error) {
-    switch (error.message) {
+    const errorCode =
+      error instanceof Exception ? error?.code : error instanceof Error ? error.message : null
+    switch (errorCode) {
       case OPERATION_NOT_SUPPORT:
         this._statusCode = 400
         break
       case VALIDATION_FAILED:
         this._statusCode = 400
-        this._message = 'Invalid payload'
+        this._message = 'Invalid payload.'
         this._meta = {
           errors: (error as any)?.messages || [],
         }
         break
-      default:
-        this._statusCode = 500
-        this._message = error.message
-        break
-    }
-  }
+      case INVALID_CREDENTIAL:
+        this._statusCode = (error as Exception).status
+        this._message = 'Invalid user credential.'
 
-  private _handleException(error: Exception) {
-    console.log(error.code)
-    switch (error.code) {
+        break
+      case FORBIDDEN:
+        this._statusCode = 403
+        this._message = 'Action not allowed.'
+        break
       case ROW_NOT_FOUND:
         this._statusCode = 404
         this._message = 'Target resource not found.'
@@ -54,7 +51,7 @@ export class ErrorHandler {
     if (!this._statusCode) {
       return {
         status: 500,
-        message: 'Server error',
+        message: 'Server error.',
       }
     }
     return {
