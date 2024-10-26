@@ -1,35 +1,54 @@
-# Project Bootstrap
+# Project Setup
 
-npm install
+This project is a **prototype version** of a Fee and Payment Management System built with **AdonisJS**. It leverages **Adonis Lucid ORM** for database interactions, **JAPA** as the unit testing library. The setup instructions below will guide you through initializing the project, setting up migrations, seeding data, and running tests.
 
-Create necessary table
-node ace migration:run
+## Table of Contents
 
-Dump dummy records
-node ace db:seed
+- [Project Startup](#project-startup)
+- [Testing](#testing)
+- [Extra Implementations](#extra-implementations)
 
-// TODO Tests cases
+---
 
-// auth
-login with wrong email & password
-login with wrong password correct email
-login with correct credentials
+## Project Startup
 
-// student
-call list api as student
-call list api as admin
-call list api as admin with filter
-call list api with empty result
+1. **Install Dependencies**
 
-get student as student
-get sutnde tas admin
-get student with invalid id
-get student with id AND CUSTOM POPULATE
+   ```
+   npm install
+   ```
 
-EDIT STUDENT AS STUDENT
-EDIT STUDENT AS ADMIN
-EDTIR STUDENT WITH INVALID FIELD
-EDITR STUDENT WITH INVALID VALUE
-EDIT STUDENT WITH SINGLE FIELD
-EDIT STUDENT WITHOUT ANY FIELD
-EDIT STUDENT WITH MULTIPLE FIELD
+2. **Run Migrations**
+
+   ```
+   node ace migration:run
+   ```
+
+3. **Seed Database**
+   ```
+   node ace db:seed
+   ```
+
+---
+
+## Testing
+
+To run tests, it is recommended to use a separate database schema.
+
+```
+npm run test
+```
+
+---
+
+## Extra Implementations
+
+- ⬜ **Setup the development environment using Docker**
+- ✅ **Admin User Authentication**
+- ⬜ **Cache with Redis**
+- ⬜ **User Actions Log**
+- ✅ **Unit Tests**
+
+## License
+
+This project is licensed under the MIT License.
