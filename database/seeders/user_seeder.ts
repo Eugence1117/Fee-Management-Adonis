@@ -1,18 +1,28 @@
 import User, { UserRole } from '#models/user'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
+export const adminCredential = {
+  email: 'admin@email.com',
+  password: 'admin',
+}
+
+export const studentCredential = {
+  email: 'student@email.com',
+  password: 'student',
+}
+
 export default class extends BaseSeeder {
   async run() {
     await User.createMany([
       {
-        email: 'eugencelim@gmail.com',
-        password: 'eugence',
-        fullName: 'Eugence',
+        email: adminCredential.email,
+        password: adminCredential.password,
+        fullName: 'Admin',
         role: UserRole.Admin,
       },
       {
-        email: 'student@gmail.com',
-        password: 'student',
+        email: studentCredential.email,
+        password: studentCredential.password,
         fullName: 'Student A',
         role: UserRole.Student,
       },

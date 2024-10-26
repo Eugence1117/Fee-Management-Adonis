@@ -14,14 +14,12 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
-    console.log('CALLED')
     const handler = new ErrorHandler(error)
     const result = handler.toResponseBody()
     if (result) {
       const { status, ...body } = result
       return ctx.response.status(status).send(body)
     }
-
     return super.handle(error, ctx)
   }
 

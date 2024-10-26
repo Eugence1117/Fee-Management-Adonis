@@ -9,7 +9,7 @@ import { Populate } from '../../types/populate.js'
 export default class FeeController {
   constructor(private feeService: FeeService) {}
 
-  async list({ request, response }: HttpContext) {
+  async list({ request }: HttpContext) {
     const qs = request.qs()
     const pageNum = qs['page'] || 1
     const pageSize = qs['page_size'] || 50

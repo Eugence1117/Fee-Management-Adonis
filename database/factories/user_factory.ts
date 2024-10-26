@@ -9,6 +9,6 @@ export const UserFactory = factory
       password: faker.internet.password(),
     }
   })
-  .state('staff', (u) => (u.role = UserRole.Student))
-  .state('student', (u) => (u.role = UserRole.Admin))
+  .state('admin', (u) => (u.role = UserRole.Admin))
+  .state('student', (u) => (u.role = UserRole.Student))
   .build()

@@ -2,10 +2,10 @@ import User, { UserRole } from '#models/user'
 import StudentPolicy from '#policies/student_policy'
 import { inject } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
-import { FORBIDDEN } from '../../constants/errors.js'
+import { DUPLICATE_ENTRY, FORBIDDEN } from '../../constants/errors.js'
 import { Filter } from '../../types/filter.js'
 import { Populate } from '../../types/populate.js'
-import { EditUserPayload } from '../../types/services/student_service.js'
+import { CreateStudentPayload, EditStudentPayload } from '../../types/services/student_service.js'
 import { buildQuery } from '../../utils/queryBuilder.js'
 
 @inject()
@@ -46,13 +46,37 @@ export default class StudentService {
   async editById({
     id,
     ...fields
-  }: Partial<EditUserPayload> & {
+  }: Partial<EditStudentPayload> & {
     id: number
   }) {
     if (await this.ctx.bouncer.with(StudentPolicy).denies('edit')) {
       throw new Error(FORBIDDEN)
     }
+    if (fields.email) {
+      // Check for duplicate entry
+      const user = await User.query().where('email', fields.email).whereNot('id', id).first()
+      if (user) {
+        throw new Error(DUPLICATE_ENTRY)
+      }
+    }
     const student = await User.query().where('role', UserRole.Student).where('id', id).firstOrFail()
     await student.merge(fields).save()
+  }
+
+  async create(payload: CreateStudentPayload) {
+    if (await this.ctx.bouncer.with(StudentPolicy).denies('create')) {
+      throw new Error(FORBIDDEN)
+    }
+
+    // Check for duplicate entry
+    const user = await User.query().where('email', payload.email).first()
+    if (user) {
+      throw new Error(DUPLICATE_ENTRY)
+    }
+    const student = await User.create({
+      ...payload,
+      role: UserRole.Student,
+    })
+    await student.save()
   }
 }

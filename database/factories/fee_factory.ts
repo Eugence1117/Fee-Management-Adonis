@@ -15,5 +15,4 @@ export const FeeFactory = factory
   .state('cancelled', (fee) => (fee.status = FeeStatus.Cancelled))
   .state('unpaid', (fee) => (fee.status = FeeStatus.Unpaid))
   .relation('user', () => UserFactory.apply('student'))
-  .relation('createdBy', () => UserFactory.apply('staff'))
   .build()

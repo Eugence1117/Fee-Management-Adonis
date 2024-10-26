@@ -3,7 +3,6 @@ import vine from '@vinejs/vine'
 
 export const createPaymentValidator = vine.compile(
   vine.object({
-    amount: vine.number(),
     feeId: vine.number(),
   })
 )

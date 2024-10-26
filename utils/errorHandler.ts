@@ -1,9 +1,12 @@
 import { Exception } from '@adonisjs/core/exceptions'
 import {
+  DUPLICATE_ENTRY,
   FORBIDDEN,
   INVALID_CREDENTIAL,
   OPERATION_NOT_SUPPORT,
+  ROUTE_NOT_FOUND,
   ROW_NOT_FOUND,
+  UNAUTHORIZED_ACCESS,
   VALIDATION_FAILED,
 } from '../constants/errors.js'
 
@@ -20,6 +23,7 @@ export class ErrorHandler {
       case OPERATION_NOT_SUPPORT:
         this._statusCode = 400
         break
+      case DUPLICATE_ENTRY:
       case VALIDATION_FAILED:
         this._statusCode = 400
         this._message = 'Invalid payload.'
@@ -28,7 +32,8 @@ export class ErrorHandler {
         }
         break
       case INVALID_CREDENTIAL:
-        this._statusCode = (error as Exception).status
+      case UNAUTHORIZED_ACCESS:
+        this._statusCode = 401
         this._message = 'Invalid user credential.'
 
         break
@@ -36,6 +41,7 @@ export class ErrorHandler {
         this._statusCode = 403
         this._message = 'Action not allowed.'
         break
+      case ROUTE_NOT_FOUND:
       case ROW_NOT_FOUND:
         this._statusCode = 404
         this._message = 'Target resource not found.'

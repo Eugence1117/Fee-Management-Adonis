@@ -9,7 +9,7 @@ export default class AuthService {
   async generateToken(email: string, password: string) {
     try {
       const user = await User.verifyCredentials(email, password)
-      const token = User.accessTokens.create(user, ['*'], {
+      const token = await User.accessTokens.create(user, ['*'], {
         expiresIn: 60 * 24 * 14, // 14 days expiration
       })
 

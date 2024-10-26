@@ -1,16 +1,14 @@
-import { FeeStatus } from '#models/fee'
 import vine from '@vinejs/vine'
 
 export const createFeeValidator = vine.compile(
   vine.object({
-    amount: vine.number(),
+    amount: vine.number().min(0.01),
     userId: vine.number(),
   })
 )
 
 export const editFeeValidator = vine.compile(
   vine.object({
-    status: vine.enum([FeeStatus.Unpaid, FeeStatus.Paid, FeeStatus.Cancelled]).optional(),
     amount: vine.number().optional(),
     userId: vine.number().optional(),
     params: vine.object({ id: vine.number() }),

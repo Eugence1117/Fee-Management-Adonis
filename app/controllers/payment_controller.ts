@@ -1,9 +1,5 @@
 import PaymentService from '#services/payment_service'
-import {
-  createPaymentValidator,
-  deletePaymentValidator,
-  editPaymentValidator,
-} from '#validators/payment'
+import { createPaymentValidator, editPaymentValidator } from '#validators/payment'
 import { inject } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
 import { Filter } from '../../types/filter.js'
@@ -44,19 +40,11 @@ export default class PaymentController {
     })
   }
 
-  async delete({ request, response }: HttpContext) {
-    const { params } = await request.validateUsing(deletePaymentValidator)
-    await this.paymentService.deleteById(params.id)
-    return response.status(200).send({
-      message: 'Payment removed.',
-    })
-  }
-
   async create({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createPaymentValidator)
     await this.paymentService.create(payload)
     return response.status(201).send({
-      message: 'Fee created.',
+      message: 'Payment created.',
     })
   }
 }

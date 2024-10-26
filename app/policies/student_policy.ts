@@ -13,4 +13,8 @@ export default class StudentPolicy extends CustomBasePolicy {
   edit(): AuthorizerResponse {
     return false
   }
+
+  create(): AuthorizerResponse {
+    return false
+  }
 }

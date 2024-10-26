@@ -1,5 +1,5 @@
 import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
-import { type BelongsTo, type HasMany, type HasOne } from '@adonisjs/lucid/types/relations'
+import { type BelongsTo, type HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Payment from './payment.js'
 import User from './user.js'
@@ -30,10 +30,6 @@ export default class Fee extends BaseModel {
 
   @column()
   declare status: FeeStatus
-
-  // Meta
-  @column()
-  declare createdBy: HasOne<typeof User>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

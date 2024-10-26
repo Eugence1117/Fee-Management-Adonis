@@ -1,10 +1,10 @@
 import Fee from '#models/fee'
-import Payment from '#models/payment'
+import Payment, { PaymentStatus } from '#models/payment'
 import PaymentPolicy from '#policies/payment_policy'
 import { inject } from '@adonisjs/core'
+import { Exception } from '@adonisjs/core/exceptions'
 import { HttpContext } from '@adonisjs/core/http'
-import { DateTime } from 'luxon'
-import { FORBIDDEN } from '../../constants/errors.js'
+import { FORBIDDEN, OPERATION_NOT_SUPPORT } from '../../constants/errors.js'
 import { Filter } from '../../types/filter.js'
 import { Populate } from '../../types/populate.js'
 import { CreatePaymentPayload, EditPaymentPayload } from '../../types/services/payment_service.js'
@@ -40,7 +40,7 @@ export default class PaymentService {
 
   async getById(id: number, populate: Populate = '*', filterDeleted: boolean = true) {
     if (await this.ctx.bouncer.with(PaymentPolicy).denies('get')) {
-      throw Error(FORBIDDEN)
+      throw new Exception(FORBIDDEN)
     }
     const query = Payment.query()
     buildQuery(query, populate, [
@@ -69,22 +69,21 @@ export default class PaymentService {
     await payment.merge(fields).save()
   }
 
-  async deleteById(id: number) {
-    if (await this.ctx.bouncer.with(PaymentPolicy).denies('delete')) {
-      throw new Error(FORBIDDEN)
-    }
-    const payment = await Payment.query().whereNull('deletedAt').where('id', id).firstOrFail()
-    payment.deletedAt = DateTime.now()
-    await payment.save()
-  }
-
   async create(payload: CreatePaymentPayload) {
     const fee = await Fee.findOrFail(payload.feeId)
     if (await this.ctx.bouncer.with(PaymentPolicy).denies('create', fee)) {
       throw new Error(FORBIDDEN)
     }
+    // Cannot create if already has on-going payment
+    const onGoing = await Payment.query()
+      .where('status', PaymentStatus.InProgress)
+      .where('feeId', fee.id)
+      .first()
+    if (onGoing !== null) {
+      throw new Error(OPERATION_NOT_SUPPORT)
+    }
     const payment = await fee.related('payments').create({
-      amount: payload.amount,
+      amount: fee.amount,
     })
     await payment.save()
   }

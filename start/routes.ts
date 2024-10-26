@@ -28,6 +28,7 @@ router.post('/login', [AuthController, 'login'])
 router.get('/students', [StudentsController, 'list']).use([middleware.auth()])
 router.get('/students/:id', [StudentsController, 'get']).use([middleware.auth()])
 router.patch('/students/:id', [StudentsController, 'edit']).use([middleware.auth()])
+router.post('/students', [StudentsController, 'create']).use([middleware.auth()])
 
 // Fee routes
 router.get('/fees', [FeesController, 'list']).use([middleware.auth()])
@@ -41,4 +42,3 @@ router.get('/payments', [PaymentsController, 'list']).use([middleware.auth()])
 router.get('/payments/:id', [PaymentsController, 'get']).use([middleware.auth()])
 router.post('/payments', [PaymentsController, 'create']).use([middleware.auth()])
 router.patch('/payments/:id', [PaymentsController, 'edit']).use([middleware.auth()])
-router.delete('/payments/:id', [PaymentsController, 'delete']).use([middleware.auth()])

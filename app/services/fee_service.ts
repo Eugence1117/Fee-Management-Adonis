@@ -1,4 +1,4 @@
-import Fee from '#models/fee'
+import Fee, { FeeStatus } from '#models/fee'
 import Payment from '#models/payment'
 import User from '#models/user'
 import FeePolicy from '#policies/fee_policy'
@@ -6,7 +6,7 @@ import { inject } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
-import { FORBIDDEN } from '../../constants/errors.js'
+import { FORBIDDEN, OPERATION_NOT_SUPPORT } from '../../constants/errors.js'
 import { Filter } from '../../types/filter.js'
 import { Populate } from '../../types/populate.js'
 import { CreateFeePayload, EditFeePayload } from '../../types/services/fee_service.js'
@@ -64,6 +64,10 @@ export default class FeeService {
       throw new Error(FORBIDDEN)
     }
     const fee = await Fee.query().whereNull('deletedAt').where('id', id).firstOrFail()
+    if (fee.status === FeeStatus.Paid) {
+      // Not allow to edit anymore once the object status cycle finished
+      throw new Error(OPERATION_NOT_SUPPORT)
+    }
     await fee.merge(fields).save()
   }
 
@@ -78,12 +82,13 @@ export default class FeeService {
         return
       }
 
-      await trx.modelQuery(Payment).where('fee_id', fee.id).update({
+      await trx.modelQuery(Payment).where('feeId', fee.id).update({
         deletedAt: DateTime.now().toISO(),
       })
       await trx.modelQuery(Fee).where('id', fee.id).update({
         deletedAt: DateTime.now().toISO(),
       })
+
       await trx.commit()
     } catch (error) {
       await trx.rollback()
