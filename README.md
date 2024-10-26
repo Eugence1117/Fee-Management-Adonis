@@ -18,13 +18,18 @@ This project is a **prototype version** of a Fee and Payment Management System b
    npm install
    ```
 
-2. **Run Migrations**
+2. **Configure Environment Variables**
+
+   - Duplicate the `.env.example` file and rename it to `.env`.
+   - Update the `.env` file with your database, and other required configuration settings.
+
+3. **Run Migrations**
 
    ```
    node ace migration:run
    ```
 
-3. **Seed Database**
+4. **Seed Database**
    ```
    node ace db:seed
    ```
