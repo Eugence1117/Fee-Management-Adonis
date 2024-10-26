@@ -57,7 +57,3 @@ npm run test
 ## Documentation
 
 You can get more information about this project from [here](../../wiki).
-
-## License
-
-This project is licensed under the MIT License.
