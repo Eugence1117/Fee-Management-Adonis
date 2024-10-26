@@ -49,6 +49,10 @@ npm run test
 - ⬜ **User Actions Log**
 - ✅ **Unit Tests**
 
+## Documentation
+
+You can get more information about the system from [Here](../../wiki)
+
 ## License
 
 This project is licensed under the MIT License.
