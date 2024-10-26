@@ -1,4 +1,4 @@
-import Fee from '#models/fee'
+import Fee, { FeeStatus } from '#models/fee'
 import Payment, { PaymentStatus } from '#models/payment'
 import PaymentPolicy from '#policies/payment_policy'
 import { inject } from '@adonisjs/core'
@@ -74,14 +74,21 @@ export default class PaymentService {
     if (await this.ctx.bouncer.with(PaymentPolicy).denies('create', fee)) {
       throw new Error(FORBIDDEN)
     }
+    // If already settled, disable create any new payment
+    if (fee.status === FeeStatus.Paid) {
+      throw new Error(OPERATION_NOT_SUPPORT)
+    }
+
     // Cannot create if already has on-going payment
     const onGoing = await Payment.query()
       .where('status', PaymentStatus.InProgress)
       .where('feeId', fee.id)
+      .whereNull('deletedAt')
       .first()
     if (onGoing !== null) {
       throw new Error(OPERATION_NOT_SUPPORT)
     }
+
     const payment = await fee.related('payments').create({
       amount: fee.amount,
     })

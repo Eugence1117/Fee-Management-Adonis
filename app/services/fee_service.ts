@@ -1,6 +1,6 @@
 import Fee, { FeeStatus } from '#models/fee'
 import Payment from '#models/payment'
-import User from '#models/user'
+import User, { UserRole } from '#models/user'
 import FeePolicy from '#policies/fee_policy'
 import { inject } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
@@ -68,7 +68,26 @@ export default class FeeService {
       // Not allow to edit anymore once the object status cycle finished
       throw new Error(OPERATION_NOT_SUPPORT)
     }
-    await fee.merge(fields).save()
+
+    const trx = await db.transaction()
+    try {
+      await trx
+        .modelQuery(Fee)
+        .where('id', fee.id)
+        .update({
+          ...fields,
+        })
+      if (fields.amount !== undefined) {
+        // If fee amount changed, need to delete all the existing payments, assume completed transaction will be refund
+        await trx.modelQuery(Payment).where('feeId', fee.id).update({
+          deletedAt: DateTime.now().toISO(),
+        })
+      }
+      await trx.commit()
+    } catch (error) {
+      await trx.rollback()
+      throw error
+    }
   }
 
   async deleteById(id: number) {
@@ -101,6 +120,10 @@ export default class FeeService {
       throw new Error(FORBIDDEN)
     }
     const user = await User.findOrFail(payload.userId)
+    // Only allow to create fee for student
+    if (user.role !== UserRole.Student) {
+      throw new Error(OPERATION_NOT_SUPPORT)
+    }
     const fee = await user.related('fees').create({
       amount: payload.amount,
     })

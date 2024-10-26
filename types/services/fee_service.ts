@@ -9,5 +9,4 @@ export type CreateFeePayload = {
 export type EditFeePayload = { id: Fee['id'] } & Partial<{
   status: Fee['status']
   amount: number
-  userId: User['id']
 }>

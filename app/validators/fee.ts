@@ -10,7 +10,6 @@ export const createFeeValidator = vine.compile(
 export const editFeeValidator = vine.compile(
   vine.object({
     amount: vine.number().optional(),
-    userId: vine.number().optional(),
     params: vine.object({ id: vine.number() }),
   })
 )
