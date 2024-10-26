@@ -51,7 +51,7 @@ npm run test
 
 ## Documentation
 
-You can get more information about the system from [Here](../../wiki)
+You can get more information about this project from [here](../../wiki).
 
 ## License
 
